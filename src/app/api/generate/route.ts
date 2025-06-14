@@ -69,7 +69,7 @@ export async function GET() {
   
   let message = 'API 未配置'
   if (config.configured) {
-    message = config.mode === 'mock' ? 'API 模拟模式 (开发环境)' : 'API 已配置'
+    message = config.mode === 'mock' ? 'API 模拟模式 (演示版本)' : 'API 已配置'
   }
   
   return NextResponse.json({

@@ -14,7 +14,7 @@ export const AI_MODELS = {
 // 生成另一半照片的主函数
 export async function generateSoulmate(imageFile: File): Promise<string> {
   // 检查是否为模拟模式
-  if (process.env.NODE_ENV === 'development' && !process.env.REPLICATE_API_TOKEN) {
+  if (!process.env.REPLICATE_API_TOKEN) {
     return generateMockSoulmate(imageFile)
   }
 
@@ -105,13 +105,11 @@ function buildPrompt(): string {
 // 检查 API 配置
 export function checkReplicateConfig(): { configured: boolean; mode: 'real' | 'mock' } {
   const hasToken = !!process.env.REPLICATE_API_TOKEN
-  const isDevelopment = process.env.NODE_ENV === 'development'
   
   if (hasToken) {
     return { configured: true, mode: 'real' }
-  } else if (isDevelopment) {
-    return { configured: true, mode: 'mock' }
   } else {
-    return { configured: false, mode: 'real' }
+    // 如果没有配置 token，默认使用模拟模式（适用于演示）
+    return { configured: true, mode: 'mock' }
   }
 } 
