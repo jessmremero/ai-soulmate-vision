@@ -7,8 +7,8 @@ const replicate = new Replicate({
 
 // AI 模型配置
 export const AI_MODELS = {
-  // 人脸生成模型
-  FACE_GENERATION: 'stability-ai/stable-diffusion:ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4',
+  // 使用支持图像输入的模型
+  FACE_GENERATION: 'stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf'
 }
 
 // 生成另一半照片的主函数
@@ -19,30 +19,58 @@ export async function generateSoulmate(imageFile: File): Promise<string> {
   }
 
   try {
+    console.log('🚀 开始真实 AI 生成...')
+    
     // 将文件转换为 base64
     const imageBase64 = await fileToBase64(imageFile)
+    console.log('📸 图片转换完成')
     
     // 构建 prompt
     const prompt = buildPrompt()
+    console.log('📝 Prompt:', prompt)
     
-    // 调用 Replicate API
-    const output = await replicate.run(AI_MODELS.FACE_GENERATION as any, {
-      input: {
-        image: imageBase64,
-        prompt: prompt,
-        num_outputs: 1,
-        guidance_scale: 7.5,
-        num_inference_steps: 50,
-        width: 512,
-        height: 512,
-      }
-    })
+    // 调用 Replicate API 带超时
+    const output = await Promise.race([
+      replicate.run(AI_MODELS.FACE_GENERATION as any, {
+        input: {
+          prompt: prompt,
+          init_image: imageBase64,
+          width: 512,
+          height: 512,
+          prompt_strength: 0.8,
+          num_outputs: 1,
+          num_inference_steps: 50,
+          guidance_scale: 7.5,
+          scheduler: "DPMSolverMultistep"
+        }
+      }),
+      // 2分钟超时
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('AI 生成超时，请稍后重试')), 120000)
+      )
+    ])
+    
+    console.log('✅ AI 生成完成:', output)
     
     // 返回生成的图片URL
     return Array.isArray(output) ? output[0] as string : String(output)
     
   } catch (error) {
-    console.error('Replicate API Error:', error)
+    console.error('❌ Replicate API Error:', error)
+    
+    // 提供更友好的错误信息
+    if (error instanceof Error) {
+      if (error.message.includes('timeout') || error.message.includes('超时')) {
+        throw new Error('AI 生成超时，请稍后重试')
+      }
+      if (error.message.includes('quota') || error.message.includes('limit')) {
+        throw new Error('API 配额不足，请稍后重试')
+      }
+      if (error.message.includes('authentication') || error.message.includes('unauthorized')) {
+        throw new Error('API 认证失败，请检查 Token 配置')
+      }
+    }
+    
     throw new Error('AI 生成失败，请稍后重试')
   }
 }
@@ -96,9 +124,9 @@ async function fileToBase64(file: File): Promise<string> {
 // 构建 AI 提示词
 function buildPrompt(): string {
   return `
-    Generate a realistic portrait of a person who would be a perfect romantic match.
-    Create an attractive, photorealistic face with natural features.
-    High quality, professional portrait style with warm, friendly expression.
+    A beautiful, attractive person with complementary features, photorealistic portrait, 
+    professional photography, warm smile, natural lighting, high quality, detailed face, 
+    romantic partner aesthetic, appealing appearance, well-groomed, stylish
   `.trim()
 }
 
