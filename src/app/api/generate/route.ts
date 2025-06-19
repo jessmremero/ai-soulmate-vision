@@ -41,25 +41,43 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    console.log('📸 开始调用 AI 生成，文件信息:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    })
+
     // 调用 AI 生成
     const generatedImageUrl = await generateSoulmate(file)
 
-    return NextResponse.json({
+    console.log('✅ AI 生成完成，URL:', generatedImageUrl)
+
+    // 检查是否为模拟模式（基于返回的URL判断）
+    const isDemo = generatedImageUrl.includes('unsplash.com')
+
+    const response = {
       success: true,
       imageUrl: generatedImageUrl,
-      message: '生成成功！'
-    })
+      message: isDemo ? '演示生成完成！' : '生成成功！',
+      isDemo: isDemo,
+      demoMessage: isDemo ? '这是演示模式，真实AI将根据您的面部特征生成更加个性化的结果' : undefined
+    }
+
+    console.log('📤 返回响应:', response)
+    return NextResponse.json(response)
 
   } catch (error) {
-    console.error('API Error:', error)
+    console.error('❌ API Error:', error)
+    console.error('错误堆栈:', error instanceof Error ? error.stack : '无堆栈信息')
     
-    return NextResponse.json(
-      { 
-        error: error instanceof Error ? error.message : '生成失败，请稍后重试',
-        success: false 
-      },
-      { status: 500 }
-    )
+    const errorMessage = error instanceof Error ? error.message : '生成失败，请稍后重试'
+    const response = { 
+      error: errorMessage,
+      success: false 
+    }
+    
+    console.log('📤 返回错误响应:', response)
+    return NextResponse.json(response, { status: 500 })
   }
 }
 

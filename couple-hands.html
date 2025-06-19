@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情侣牵手图片</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+        }
+        
+        h1 {
+            color: #8b4513;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .hands-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hands-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,182,193,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-20px, -20px) rotate(180deg); }
+        }
+        
+        .hands-svg {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .heart {
+            fill: #ff6b9d;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .hand-left {
+            fill: #fdbcb4;
+            stroke: #e8a298;
+            stroke-width: 2;
+        }
+        
+        .hand-right {
+            fill: #f4a6a0;
+            stroke: #d89490;
+            stroke-width: 2;
+        }
+        
+        .sparkle {
+            fill: #ffd700;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .download-btn {
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 10px;
+            box-shadow: 0 5px 15px rgba(196, 69, 105, 0.3);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(196, 69, 105, 0.4);
+        }
+        
+        .info {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💕 情侣牵手</h1>
+        
+        <div class="hands-container">
+            <svg class="hands-svg" width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+                <!-- 背景装饰 -->
+                <defs>
+                    <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" style="stop-color:#ffe0e6;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.2" />
+                    </radialGradient>
+                </defs>
+                
+                <!-- 背景圆 -->
+                <circle cx="300" cy="200" r="180" fill="url(#bgGradient)" />
+                
+                <!-- 左手 (女性，稍小一些) -->
+                <path class="hand-left" d="M180 200 
+                    C 180 180, 190 170, 210 170
+                    C 230 170, 240 180, 240 200
+                    L 240 250
+                    C 240 270, 230 280, 210 280
+                    L 200 280
+                    C 190 280, 180 270, 180 250
+                    Z" />
+                
+                <!-- 左手手指 -->
+                <ellipse class="hand-left" cx="195" cy="185" rx="8" ry="25" />
+                <ellipse class="hand-left" cx="210" cy="175" rx="8" ry="30" />
+                <ellipse class="hand-left" cx="225" cy="180" rx="8" ry="28" />
+                <ellipse class="hand-left" cx="235" cy="190" rx="7" ry="22" />
+                
+                <!-- 右手 (男性，稍大一些) -->
+                <path class="hand-right" d="M360 200 
+                    C 360 180, 370 170, 390 170
+                    C 415 170, 425 180, 425 200
+                    L 425 260
+                    C 425 280, 415 290, 390 290
+                    L 375 290
+                    C 365 290, 360 280, 360 260
+                    Z" />
+                
+                <!-- 右手手指 -->
+                <ellipse class="hand-right" cx="375" cy="185" rx="9" ry="28" />
+                <ellipse class="hand-right" cx="390" cy="175" rx="9" ry="32" />
+                <ellipse class="hand-right" cx="405" cy="180" rx="9" ry="30" />
+                <ellipse class="hand-right" cx="415" cy="190" rx="8" ry="25" />
+                
+                <!-- 牵手连接部分 -->
+                <path class="hand-left" d="M240 220 C 260 215, 280 215, 300 220 C 320 215, 340 215, 360 220 L 360 240 C 340 245, 320 245, 300 240 C 280 245, 260 245, 240 240 Z" opacity="0.8" />
+                
+                <!-- 爱心 -->
+                <path class="heart" d="M300 240 C 290 230, 270 230, 270 250 C 270 270, 300 290, 300 290 C 300 290, 330 270, 330 250 C 330 230, 310 230, 300 240 Z" />
+                
+                <!-- 闪闪发光效果 -->
+                <g class="sparkle">
+                    <circle cx="250" cy="150" r="3" />
+                    <circle cx="350" cy="160" r="2" />
+                    <circle cx="280" cy="320" r="2.5" />
+                    <circle cx="320" cy="310" r="2" />
+                    <circle cx="200" cy="300" r="1.5" />
+                    <circle cx="400" cy="290" r="2" />
+                </g>
+                
+                <!-- 更多装饰性小心心 -->
+                <g fill="#ffb3d9" opacity="0.6">
+                    <path d="M150 120 C 145 115, 135 115, 135 125 C 135 135, 150 145, 150 145 C 150 145, 165 135, 165 125 C 165 115, 155 115, 150 120 Z" />
+                    <path d="M450 130 C 445 125, 435 125, 435 135 C 435 145, 450 155, 450 155 C 450 155, 465 145, 465 135 C 465 125, 455 125, 450 130 Z" />
+                    <path d="M120 250 C 117 247, 110 247, 110 253 C 110 259, 120 266, 120 266 C 120 266, 130 259, 130 253 C 130 247, 123 247, 120 250 Z" />
+                    <path d="M480 260 C 477 257, 470 257, 470 263 C 470 269, 480 276, 480 276 C 480 276, 490 269, 490 263 C 490 257, 483 257, 480 260 Z" />
+                </g>
+            </svg>
+        </div>
+        
+        <button class="download-btn" onclick="downloadImage()">📥 下载图片</button>
+        <button class="download-btn" onclick="copyImage()">📋 复制图片</button>
+        
+        <div class="info">
+            <h3>💝 温馨提示</h3>
+            <p>这是一张象征爱情的情侣牵手图片，两只手紧紧相握，中间有一颗跳动的爱心。</p>
+            <p>左手代表女性（稍小巧），右手代表男性（稍宽厚），周围有闪烁的星光和小爱心装饰。</p>
+            <p>您可以下载这张图片用作头像、壁纸或分享给您的另一半。</p>
+        </div>
+    </div>
+
+    <script>
+        function downloadImage() {
+            // 创建canvas来生成图片
+            const svg = document.querySelector('.hands-svg');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 600;
+            canvas.height = 400;
+            
+            // 设置白色背景
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 600, 400);
+            
+            const data = new XMLSerializer().serializeToString(svg);
+            const img = new Image();
+            
+            const svgBlob = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+                
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = '情侣牵手.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                URL.revokeObjectURL(url);
+            };
+            
+            img.src = url;
+        }
+        
+        async function copyImage() {
+            try {
+                const svg = document.querySelector('.hands-svg');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = 600;
+                canvas.height = 400;
+                
+                // 设置白色背景
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, 600, 400);
+                
+                const data = new XMLSerializer().serializeToString(svg);
+                const img = new Image();
+                
+                const svgBlob = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+                const url = URL.createObjectURL(svgBlob);
+                
+                img.onload = async function() {
+                    ctx.drawImage(img, 0, 0);
+                    
+                    canvas.toBlob(async (blob) => {
+                        try {
+                            await navigator.clipboard.write([
+                                new ClipboardItem({ 'image/png': blob })
+                            ]);
+                            alert('图片已复制到剪贴板！');
+                        } catch (err) {
+                            alert('复制失败，请使用下载功能');
+                        }
+                    });
+                    
+                    URL.revokeObjectURL(url);
+                };
+                
+                img.src = url;
+            } catch (err) {
+                alert('复制失败，请使用下载功能');
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,39 @@
+{
+    "name": "AISoulmateVision - AI生成你的另一半",
+    "short_name": "AI Soulmate",
+    "description": "使用AI技术生成你的另一半形象，完全免费，30秒生成，隐私保护",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ff6b9d",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "categories": ["entertainment", "lifestyle", "photo"],
+    "lang": "zh-CN"
+} 

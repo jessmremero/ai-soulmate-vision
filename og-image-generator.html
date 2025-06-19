@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AISoulmateVision - 社交分享图片生成器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f3f4f6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .og-image {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 25%, #f3e8ff 50%, #e0e7ff 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 24px;
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3);
+        }
+        
+        .content {
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .main-title {
+            font-size: 72px;
+            font-weight: 800;
+            color: #1f2937;
+            margin: 0 0 16px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #1f2937, #4b5563);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .sub-title {
+            font-size: 48px;
+            color: #6b7280;
+            margin: 0 0 32px 0;
+            font-weight: 600;
+        }
+        
+        .features {
+            font-size: 32px;
+            color: #059669;
+            margin: 0 0 24px 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .description {
+            font-size: 28px;
+            color: #4b5563;
+            margin: 0;
+            font-weight: 500;
+            max-width: 800px;
+            line-height: 1.2;
+        }
+        
+        .decoration {
+            position: absolute;
+            opacity: 0.1;
+        }
+        
+        .decoration-1 {
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 50%;
+        }
+        
+        .decoration-2 {
+            bottom: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .instructions h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+        
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <!-- 这是要截图的区域 -->
+        <div class="og-image" id="ogImage">
+            <!-- 装饰元素 -->
+            <div class="decoration decoration-1"></div>
+            <div class="decoration decoration-2"></div>
+            
+            <!-- Logo -->
+            <div class="logo">AI</div>
+            
+            <!-- 主要内容 -->
+            <div class="content">
+                <h1 class="main-title">AISoulmateVision</h1>
+                <h2 class="sub-title">AI生成你的另一半</h2>
+                
+                <div class="features">
+                    <div class="feature-item">
+                        <span>✨</span>
+                        <span>完全免费</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>🚀</span>
+                        <span>30秒生成</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>🔒</span>
+                        <span>隐私保护</span>
+                    </div>
+                </div>
+                
+                <p class="description">上传照片，AI为你生成匹配的异性版本</p>
+            </div>
+        </div>
+        
+        <!-- 操作说明 -->
+        <div class="instructions">
+            <h3>📸 截图操作说明：</h3>
+            <div class="step">
+                <strong>步骤1：</strong> 右键点击上方的图片区域，选择"检查元素"或按F12
+            </div>
+            <div class="step">
+                <strong>步骤2：</strong> 在开发者工具中，右键点击图片，选择"截图节点"或"Capture node screenshot"
+            </div>
+            <div class="step">
+                <strong>步骤3：</strong> 保存图片为 <code>og-image.jpg</code>
+            </div>
+            <div class="step">
+                <strong>步骤4：</strong> 将图片放到项目的 <code>public</code> 文件夹中
+            </div>
+            <div class="step">
+                <strong>备用方法：</strong> 使用截图工具精确截取上方1200×630的区域
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 确保图片尺寸精确
+        window.addEventListener('load', function() {
+            const ogImage = document.getElementById('ogImage');
+            console.log('图片尺寸:', ogImage.offsetWidth, 'x', ogImage.offsetHeight);
+            
+            if (ogImage.offsetWidth !== 1200 || ogImage.offsetHeight !== 630) {
+                console.warn('尺寸不正确，请检查CSS设置');
+            }
+        });
+    </script>
+</body>
+</html> 
