@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 interface UploadError {
@@ -16,6 +16,7 @@ export default function UploadSection() {
   const [uploadError, setUploadError] = useState<UploadError | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null)
+  const [isImageLoading, setIsImageLoading] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false)
 
@@ -59,12 +60,12 @@ export default function UploadSection() {
     setPreviewUrl(url)
   }
 
-  const cleanupPreview = () => {
+  const cleanupPreview = useCallback(() => {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
     }
-  }
+  }, [previewUrl])
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -138,10 +139,12 @@ export default function UploadSection() {
     setUploadError(null)
     setIsGenerating(false)
     setGeneratedImageUrl(null)
+    setIsImageLoading(false)
   }
 
   const handleRegenerate = () => {
     setGeneratedImageUrl(null)
+    setIsImageLoading(false)
     handleGenerate()
   }
 
@@ -262,6 +265,40 @@ export default function UploadSection() {
     setIsShareMenuOpen(false)
   }
 
+  // 处理图片加载状态
+  useEffect(() => {
+    if (generatedImageUrl) {
+      setIsImageLoading(true)
+      console.log('开始加载图片:', generatedImageUrl)
+      
+      // 创建新的Image对象来预加载
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      
+      img.onload = () => {
+        console.log('图片预加载完成')
+        setIsImageLoading(false)
+      }
+      
+      img.onerror = (e) => {
+        console.log('图片预加载失败', e)
+        setIsImageLoading(false)
+      }
+      
+      img.src = generatedImageUrl
+      
+      // 超时保护
+      const timeout = setTimeout(() => {
+        console.log('图片加载超时，强制结束loading')
+        setIsImageLoading(false)
+      }, 5000)
+      
+      return () => {
+        clearTimeout(timeout)
+      }
+    }
+  }, [generatedImageUrl])
+
   useEffect(() => {
     return () => {
       cleanupPreview()
@@ -381,6 +418,14 @@ export default function UploadSection() {
                   </div>
                   <p className="text-lg font-medium text-purple-800 mb-4">{t('upload.ui.generating')}</p>
                 </div>
+              ) : isImageLoading ? (
+                <div className="border border-green-300 rounded-xl h-80 flex flex-col items-center justify-center bg-white shadow-md">
+                  <div className="w-14 h-14 mb-6 relative">
+                    <div className="absolute inset-0 border-4 border-green-200 rounded-full"></div>
+                    <div className="absolute inset-0 border-4 border-green-600 rounded-full border-t-transparent animate-spin"></div>
+                  </div>
+                  <p className="text-lg font-medium text-green-800 mb-4">{t('upload.ui.imageLoading')}</p>
+                </div>
               ) : (
                 <div className="relative h-80 rounded-xl shadow-lg bg-white border border-gray-200 p-6">
                   <div className="w-full h-full flex items-center justify-center">
@@ -389,6 +434,15 @@ export default function UploadSection() {
                         src={generatedImageUrl!}
                         alt={t('upload.preview.generatedImage')}
                         className="max-w-full max-h-full object-contain rounded-lg shadow-sm"
+                        onLoad={() => {
+                          console.log('图片加载完成')
+                          setIsImageLoading(false)
+                        }}
+                        onError={(e) => {
+                          console.log('图片加载失败', e)
+                          setIsImageLoading(false)
+                        }}
+                        crossOrigin="anonymous"
                       />
                     </div>
                   </div>
