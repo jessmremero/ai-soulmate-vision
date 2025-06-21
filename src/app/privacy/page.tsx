@@ -172,7 +172,7 @@ export default function Privacy() {
               </p>
               <div className="bg-gray-50 rounded-lg p-6 space-y-2">
                 <p><strong>项目名称</strong>：AISoulmateVision</p>
-                <p><strong>电子邮件</strong>：privacy@aisoulmatevision.com</p>
+                <p><strong>电子邮件</strong>：wanghuitian475@gmail.com</p>
                 <p><strong>响应时间</strong>：我们将在7个工作日内回复您的询问</p>
               </div>
             </div>

@@ -266,7 +266,7 @@ export default function UploadSection() {
     return () => {
       cleanupPreview()
     }
-  }, [])
+  }, [cleanupPreview])
 
   return (
     <section id="upload-section" className="w-full py-8 px-6">
