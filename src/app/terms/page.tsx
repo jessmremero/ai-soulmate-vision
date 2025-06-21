@@ -222,7 +222,7 @@ export default function Terms() {
               <div className="bg-gray-50 rounded-lg p-6">
                 <p><strong>项目名称</strong>：AISoulmateVision</p>
                 <p><strong>法务联系</strong>：legal@aisoulmatevision.com</p>
-                <p><strong>客服支持</strong>：support@aisoulmatevision.com</p>
+                <p><strong>客服支持</strong>：wanghuitian475@gmail.com</p>
               </div>
             </div>
           </section>

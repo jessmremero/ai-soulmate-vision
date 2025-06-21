@@ -1,16 +1,22 @@
+'use client'
+
+import { useLanguage } from '@/contexts/LanguageContext'
+
 export default function SocialProof() {
+  const { t } = useLanguage()
+  
   return (
     <section className="py-12 px-6">
       <div className="max-w-4xl mx-auto text-center">
         {/* 简化版标题 */}
         <div className="mb-8">
           <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-            已为 <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            {t('socialProof.title')} <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               5000+
-            </span> 用户生成理想另一半
+            </span> {t('socialProof.users')}
           </h3>
           <p className="text-gray-600 text-lg">
-            平均30秒生成，98%满意度
+            {t('socialProof.subtitle')}
           </p>
         </div>
         
@@ -18,19 +24,19 @@ export default function SocialProof() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div className="text-center">
             <div className="text-3xl font-bold text-purple-600 mb-1">5,000+</div>
-            <div className="text-sm text-gray-500">用户数量</div>
+            <div className="text-sm text-gray-500">{t('socialProof.stats.users')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-pink-600 mb-1">8,500+</div>
-            <div className="text-sm text-gray-500">生成照片</div>
+            <div className="text-sm text-gray-500">{t('socialProof.stats.photos')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-blue-600 mb-1">98%</div>
-            <div className="text-sm text-gray-500">满意度</div>
+            <div className="text-sm text-gray-500">{t('socialProof.stats.satisfaction')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-green-600 mb-1">30s</div>
-            <div className="text-sm text-gray-500">平均时长</div>
+            <div className="text-sm text-gray-500">{t('socialProof.stats.avgTime')}</div>
           </div>
         </div>
 
@@ -54,7 +60,7 @@ export default function SocialProof() {
                 ))}
               </div>
             </div>
-            <div className="text-sm text-gray-500">平均用户评分</div>
+            <div className="text-sm text-gray-500">{t('socialProof.rating')}</div>
           </div>
         </div>
       </div>

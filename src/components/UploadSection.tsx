@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface UploadError {
   type: 'size' | 'format' | 'general'
@@ -8,6 +9,7 @@ interface UploadError {
 }
 
 export default function UploadSection() {
+  const { t } = useLanguage()
   const [isDragOver, setIsDragOver] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -26,14 +28,14 @@ export default function UploadSection() {
     if (!ALLOWED_TYPES.includes(file.type)) {
       return {
         type: 'format',
-        message: '请上传 JPG、PNG 或 WebP 格式的图片'
+        message: t('upload.errors.format')
       }
     }
 
     if (file.size > MAX_FILE_SIZE) {
       return {
         type: 'size',
-        message: `文件大小不能超过 ${MAX_FILE_SIZE / 1024 / 1024}MB`
+        message: `${t('upload.errors.size')} ${MAX_FILE_SIZE / 1024 / 1024}MB`
       }
     }
 
@@ -110,20 +112,20 @@ export default function UploadSection() {
       const data = await response.json()
       
       if (!response.ok) {
-        throw new Error(data.error || '生成失败')
+        throw new Error(data.error || t('upload.errors.generateFailed'))
       }
       
       if (data.success && data.imageUrl) {
         setGeneratedImageUrl(data.imageUrl)
       } else {
-        throw new Error(data.error || '生成失败')
+        throw new Error(data.error || t('upload.errors.generateFailed'))
       }
       
     } catch (error) {
       console.error('Generation error:', error)
       setUploadError({
         type: 'general',
-        message: error instanceof Error ? error.message : '生成失败，请稍后重试'
+        message: error instanceof Error ? error.message : t('upload.errors.generateRetry')
       })
     } finally {
       setIsGenerating(false)
@@ -153,7 +155,7 @@ export default function UploadSection() {
       const ctx = canvas.getContext('2d')
       
       if (!ctx) {
-        throw new Error('无法创建canvas')
+        throw new Error(t('upload.errors.canvasError'))
       }
 
       const originalImg = new Image()
@@ -189,7 +191,7 @@ export default function UploadSection() {
       ctx.fillStyle = '#1f2937'
       ctx.font = 'bold 24px Arial, sans-serif'
       ctx.textAlign = 'center'
-      ctx.fillText('AI生成的另一半', canvas.width / 2, 40)
+      ctx.fillText(t('upload.actions.aiGenerated'), canvas.width / 2, 40)
 
       ctx.drawImage(originalImg, padding, titleHeight, imgWidth, imgHeight)
       ctx.drawImage(generatedImg, imgWidth + padding * 2, titleHeight, imgWidth, imgHeight)
@@ -198,8 +200,8 @@ export default function UploadSection() {
       ctx.fillStyle = '#6b7280'
       ctx.textAlign = 'center'
       
-      ctx.fillText('你的照片', padding + imgWidth / 2, canvas.height - 10)
-      ctx.fillText('AI生成的另一半', imgWidth + padding * 2 + imgWidth / 2, canvas.height - 10)
+      ctx.fillText(t('upload.actions.yourPhoto'), padding + imgWidth / 2, canvas.height - 10)
+      ctx.fillText(t('upload.actions.aiGenerated'), imgWidth + padding * 2 + imgWidth / 2, canvas.height - 10)
 
       canvas.toBlob((blob) => {
         if (blob) {
@@ -215,15 +217,15 @@ export default function UploadSection() {
       }, 'image/png')
       
     } catch (error) {
-      console.error('下载失败:', error)
-      alert('下载失败，请稍后重试')
+      console.error(t('upload.errors.downloadFailed'), error)
+      alert(t('upload.errors.downloadRetry'))
     } finally {
       setIsDownloading(false)
     }
   }
 
   const shareToSocialMedia = (platform: string) => {
-    const shareText = '我用AI生成了完美的另一半！快来试试吧 ✨'
+    const shareText = t('upload.actions.shareText')
     const shareUrl = window.location.origin
     
     let url = ''
@@ -249,7 +251,7 @@ export default function UploadSection() {
         break
       case 'copy':
         navigator.clipboard.writeText(`${shareText} ${shareUrl}`)
-        alert('链接已复制到剪贴板！')
+        alert(t('upload.actions.linkCopied'))
         break
     }
     
@@ -273,8 +275,8 @@ export default function UploadSection() {
           
           <div className="flex flex-col h-full">
             <div className="text-center mb-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">📸 上传你的照片</h3>
-              <p className="text-gray-600 text-sm">支持 JPG、PNG、WebP 格式，最大 10MB</p>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">{t('upload.ui.uploadTitle')}</h3>
+              <p className="text-gray-600 text-sm">{t('upload.ui.uploadSubtitle')}</p>
             </div>
             
             <div className="flex-1 flex flex-col">
@@ -306,10 +308,10 @@ export default function UploadSection() {
                     </div>
                     <div>
                       <p className="text-lg font-medium text-gray-700 mb-2">
-                        拖拽照片到这里，或者点击选择
+                        {t('upload.ui.dragHere')}
                       </p>
                       <p className="text-sm text-gray-500">
-                        建议使用清晰的正面照片，效果更佳
+                        {t('upload.ui.suggestion')}
                       </p>
                     </div>
                   </div>
@@ -326,14 +328,14 @@ export default function UploadSection() {
                     <div className="max-w-full max-h-full aspect-square flex items-center justify-center relative">
                       <img
                         src={previewUrl}
-                        alt="预览图片"
+                        alt={t('upload.preview.previewImage')}
                         className="max-w-full max-h-full object-contain rounded-lg shadow-sm pointer-events-none"
                       />
                       
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg flex items-center justify-center">
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white bg-opacity-90 rounded-lg px-4 py-2 text-center">
-                          <p className="text-sm font-medium text-gray-800">点击重新选择照片</p>
-                          <p className="text-xs text-gray-600">或拖拽新照片到这里</p>
+                          <p className="text-sm font-medium text-gray-800">{t('upload.ui.changePhoto')}</p>
+                          <p className="text-xs text-gray-600">{t('upload.ui.dragNew')}</p>
                         </div>
                       </div>
                     </div>
@@ -356,8 +358,8 @@ export default function UploadSection() {
 
           <div className="flex flex-col h-full">
             <div className="text-center mb-5">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">✨ AI生成的另一半</h3>
-              <p className="text-gray-600 text-sm">AI会分析你的特征生成匹配的异性版本</p>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">{t('upload.ui.resultTitle')}</h3>
+              <p className="text-gray-600 text-sm">{t('upload.ui.resultSubtitle')}</p>
             </div>
 
             <div className="flex-1 flex flex-col">
@@ -368,8 +370,8 @@ export default function UploadSection() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </div>
-                  <p className="text-lg font-medium mb-2">等待上传照片</p>
-                  <p className="text-sm">上传照片后点击生成按钮</p>
+                  <p className="text-lg font-medium mb-2">{t('upload.ui.waitingUpload')}</p>
+                  <p className="text-sm">{t('upload.ui.uploadToGenerate')}</p>
                 </div>
               ) : isGenerating ? (
                 <div className="border border-purple-300 rounded-xl h-80 flex flex-col items-center justify-center bg-white shadow-md">
@@ -377,7 +379,7 @@ export default function UploadSection() {
                     <div className="absolute inset-0 border-4 border-purple-200 rounded-full"></div>
                     <div className="absolute inset-0 border-4 border-purple-600 rounded-full border-t-transparent animate-spin"></div>
                   </div>
-                  <p className="text-lg font-medium text-purple-800 mb-4">AI正在生成中...</p>
+                  <p className="text-lg font-medium text-purple-800 mb-4">{t('upload.ui.generating')}</p>
                 </div>
               ) : (
                 <div className="relative h-80 rounded-xl shadow-lg bg-white border border-gray-200 p-6">
@@ -385,7 +387,7 @@ export default function UploadSection() {
                     <div className="max-w-full max-h-full aspect-square flex items-center justify-center relative">
                       <img
                         src={generatedImageUrl!}
-                        alt="AI生成的另一半"
+                        alt={t('upload.preview.generatedImage')}
                         className="max-w-full max-h-full object-contain rounded-lg shadow-sm"
                       />
                     </div>
@@ -403,7 +405,7 @@ export default function UploadSection() {
                 onClick={handleGenerate}
                 className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg"
               >
-                🎨 生成我的另一半
+                {t('upload.ui.generateButton')}
               </button>
             ) : (
               <div className="flex flex-wrap gap-3 justify-center">
@@ -418,12 +420,12 @@ export default function UploadSection() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      <span>下载中...</span>
+                      <span>{t('upload.ui.downloading')}</span>
                     </>
                   ) : (
                     <>
                       <span>📥</span>
-                      <span>下载图片</span>
+                      <span>{t('upload.ui.downloadButton')}</span>
                     </>
                   )}
                 </button>
@@ -434,7 +436,7 @@ export default function UploadSection() {
                     className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 flex items-center space-x-2 shadow-lg"
                   >
                     <span>📤</span>
-                    <span>分享</span>
+                    <span>{t('upload.share')}</span>
                   </button>
 
                   {isShareMenuOpen && (

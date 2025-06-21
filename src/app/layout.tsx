@@ -1,16 +1,14 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { LanguageProvider } from '@/contexts/LanguageContext'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: {
-    default: 'AISoulmateVision - AI生成你的另一半 | 免费AI图像生成器',
-    template: '%s | AISoulmateVision'
-  },
-  description: '使用AI技术生成你的另一半形象，完全免费，30秒生成，隐私保护。支持JPG、PNG、WebP格式，基于先进的FLUX.1-Dev模型，无需注册，立即体验。',
-  keywords: 'AI生成图像,AI另一半,人工智能,图像生成,免费AI工具,FLUX模型,AI换脸,虚拟另一半,AI头像生成',
+  title: 'AI Soulmate Vision - Generate Your Perfect Match',
+  description: 'Upload a photo and let AI generate your ideal soulmate in 30 seconds. Free, fast, and privacy-protected.',
+  keywords: ['AI', 'soulmate', 'photo generation', 'artificial intelligence'],
   authors: [{ name: 'AISoulmateVision Team' }],
   creator: 'AISoulmateVision',
   publisher: 'AISoulmateVision',
@@ -26,26 +24,26 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    type: 'website',
-    locale: 'zh_CN',
+    title: 'AI Soulmate Vision - Generate Your Perfect Match',
+    description: 'Upload a photo and let AI generate your ideal soulmate in 30 seconds. Free, fast, and privacy-protected.',
     url: 'https://aisoulmatevision.com',
-    siteName: 'AISoulmateVision',
-    title: 'AISoulmateVision - AI生成你的另一半',
-    description: '使用AI技术生成你的另一半形象，完全免费，30秒生成，隐私保护。立即体验最先进的AI图像生成技术。',
+    siteName: 'AI Soulmate Vision',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'AISoulmateVision - AI生成你的另一半',
-      },
+        alt: 'AI Soulmate Vision'
+      }
     ],
+    locale: 'zh_CN',
+    type: 'website'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AISoulmateVision - AI生成你的另一半',
-    description: '使用AI技术生成你的另一半形象，完全免费，30秒生成，隐私保护。',
-    images: ['/og-image.png'],
+    title: 'AI Soulmate Vision - Generate Your Perfect Match',
+    description: 'Upload a photo and let AI generate your ideal soulmate in 30 seconds. Free, fast, and privacy-protected.',
+    images: ['/og-image.png']
   },
   alternates: {
     canonical: 'https://aisoulmatevision.com',
@@ -76,8 +74,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="zh-CN">
-      <body className={inter.className}>{children}</body>
+    <html lang="zh">
+      <body className={inter.className}>
+        <LanguageProvider defaultLanguage="zh">
+          {children}
+        </LanguageProvider>
+      </body>
     </html>
   )
 } 
