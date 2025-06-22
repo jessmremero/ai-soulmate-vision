@@ -234,9 +234,9 @@ function buildNegativePrompt(targetGender: 'male' | 'female'): string {
 
 // 检查 Replicate API 配置
 export function checkReplicateConfig(): { configured: boolean; mode: 'real' | 'mock' } {
-  const hasToken = process.env.REPLICATE_API_TOKEN && 
+  const hasToken = !!(process.env.REPLICATE_API_TOKEN && 
                    process.env.REPLICATE_API_TOKEN.trim() !== '' &&
-                   process.env.REPLICATE_API_TOKEN !== 'your-replicate-token-here'
+                   process.env.REPLICATE_API_TOKEN !== 'your-replicate-token-here')
                    
   return {
     configured: hasToken,
