@@ -73,8 +73,11 @@ export const translations = {
         generating: "AI正在生成中...",
         generateButton: "🎨 生成我的另一半",
         downloading: "下载中...",
-        downloadButton: "📥 下载图片",
-        imageLoading: "图片加载中..."
+        downloadButton: "📥 下载",
+        imageLoading: "图片加载中...",
+        targetGender: "生成性别",
+        generateFemale: "女生",
+        generateMale: "男生"
       }
     },
     
@@ -276,8 +279,11 @@ export const translations = {
         generating: "AI is generating...",
         generateButton: "🎨 Generate My Soulmate",
         downloading: "Downloading...",
-        downloadButton: "📥 Download Image",
-        imageLoading: "Loading image..."
+        downloadButton: "📥 Download",
+        imageLoading: "Loading image...",
+        targetGender: "Target Gender",
+        generateFemale: "Female",
+        generateMale: "Male"
       }
     },
     
@@ -480,8 +486,11 @@ export const translations = {
         generating: "AI生成中...",
         generateButton: "🎨 私の運命の人を生成",
         downloading: "ダウンロード中...",
-        downloadButton: "📥 画像をダウンロード",
-        imageLoading: "画像読み込み中..."
+        downloadButton: "📥 ダウンロード",
+        imageLoading: "画像読み込み中...",
+        targetGender: "生成する性別",
+        generateFemale: "女性",
+        generateMale: "男性"
       }
     },
     
@@ -682,8 +691,11 @@ export const translations = {
         generating: "AI 생성 중...",
         generateButton: "🎨 내 운명의 상대 생성",
         downloading: "다운로드 중...",
-        downloadButton: "📥 이미지 다운로드",
-        imageLoading: "이미지 로딩 중..."
+        downloadButton: "📥 다운로드",
+        imageLoading: "이미지 로딩 중...",
+        targetGender: "생성할 성별",
+        generateFemale: "여성",
+        generateMale: "남성"
       }
     },
     

@@ -14,16 +14,22 @@ export const AI_MODELS = {
 }
 
 // 生成另一半照片的主函数
-export async function generateSoulmate(imageFile: File): Promise<string> {
+export async function generateSoulmate(
+  imageFile: File,
+  targetGender: 'male' | 'female' | null
+): Promise<string> {
   // 首先检查是否有有效的 API Token
   const hasValidToken = process.env.REPLICATE_API_TOKEN && 
                        process.env.REPLICATE_API_TOKEN.trim() !== '' &&
                        process.env.REPLICATE_API_TOKEN !== 'your-replicate-token-here'
 
+  // 为 targetGender 提供一个明确的默认值，以防万一
+  const finalGender = targetGender || 'female';
+
   // 如果没有有效的API Token，直接使用模拟模式
   if (!hasValidToken) {
     console.log('🎭 未检测到有效的 Replicate API Token，使用演示模式')
-    return generateMockSoulmate(imageFile)
+    return generateMockSoulmate(imageFile, finalGender)
   }
 
   try {
@@ -40,16 +46,15 @@ export async function generateSoulmate(imageFile: File): Promise<string> {
     const imageBase64 = await fileToBase64(imageFile)
     console.log('📸 图片转换完成，大小:', Math.round(imageBase64.length / 1024), 'KB')
     
-    // 性别检测和提示词构建
-    const genderInfo = detectGender(imageFile)
-    console.log('🔍 性别检测结果:', genderInfo)
+    // 基于用户选择构建 Prompt
+    console.log('🎯 目标生成性别:', finalGender)
     
     // 构建 prompt - 根据性别检测自动生成相应的提示词
-    const prompt = buildPrompt(imageFile)
+    const prompt = buildPrompt(finalGender)
     console.log('📝 Prompt:', prompt)
     
     // 构建负面提示词 - 强烈排除情侣照和卡通风格，并确保性别正确性
-    const negativePrompt = buildNegativePrompt(imageFile)
+    const negativePrompt = buildNegativePrompt(finalGender)
     console.log('🚫 Negative Prompt:', negativePrompt)
     
     // 准备 API 参数 - PhotoMaker模型专用参数
@@ -118,7 +123,7 @@ export async function generateSoulmate(imageFile: File): Promise<string> {
           errorMessage.includes('502') ||
           errorMessage.includes('500')) {
         console.log('🌐 检测到网络/服务器问题，切换到演示模式')
-        return generateMockSoulmate(imageFile)
+        return generateMockSoulmate(imageFile, finalGender)
       }
       
       // 超时错误 - 直接抛出，让用户知道可以重试
@@ -134,7 +139,10 @@ export async function generateSoulmate(imageFile: File): Promise<string> {
 }
 
 // 增强版模拟 AI 生成功能
-async function generateMockSoulmate(imageFile: File): Promise<string> {
+async function generateMockSoulmate(
+  imageFile: File,
+  targetGender: 'male' | 'female'
+): Promise<string> {
   console.log('🎭 使用演示模式生成另一半照片...')
   
   // 模拟真实的AI处理步骤
@@ -166,26 +174,7 @@ async function generateMockSoulmate(imageFile: File): Promise<string> {
     'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=512&h=512&fit=crop&crop=face&auto=format&q=80'
   ]
   
-  // 基于文件名和大小的简单"性别检测"模拟
-  // 实际上这只是为了演示，真实AI会分析图像内容
-  const fileNameLower = imageFile.name.toLowerCase()
-  const hasFemaleTerm = ['girl', 'woman', 'female', '女', '妹', '姐'].some(term => 
-    fileNameLower.includes(term)
-  )
-  const hasMaleTerm = ['boy', 'man', 'male', '男', '哥', '弟'].some(term => 
-    fileNameLower.includes(term)
-  )
-  
-  // 智能性别选择逻辑
-  let shouldGenerateFemale: boolean
-  if (hasFemaleTerm && !hasMaleTerm) {
-    shouldGenerateFemale = false // 如果上传的是女性，生成男性
-  } else if (hasMaleTerm && !hasFemaleTerm) {
-    shouldGenerateFemale = true // 如果上传的是男性，生成女性
-  } else {
-    // 默认随机选择，但稍微偏向异性匹配
-    shouldGenerateFemale = Math.random() > 0.4
-  }
+  const shouldGenerateFemale = targetGender === 'female';
   
   const selectedImages = shouldGenerateFemale ? femaleImages : maleImages
   const genderLabel = shouldGenerateFemale ? '女性' : '男性'
@@ -221,111 +210,36 @@ async function fileToBase64(file: File): Promise<string> {
   }
 }
 
-// 性别检测函数
-function detectGender(imageFile: File): { detectedGender: string, shouldGenerateMale: boolean, confidence: string } {
-  // 基于文件名进行简单的性别推断
-  const fileNameLower = imageFile.name.toLowerCase()
-  const hasFemaleTerm = ['girl', 'woman', 'female', '女', '妹', '姐', '小姐', '美女'].some(term => 
-    fileNameLower.includes(term)
-  )
-  const hasMaleTerm = ['boy', 'man', 'male', '男', '哥', '弟', '先生', '帅哥'].some(term => 
-    fileNameLower.includes(term)
-  )
+// 提示词构建函数 - 现在基于明确的性别参数
+function buildPrompt(targetGender: 'male' | 'female'): string {
+  const basePrompt = "A photorealistic portrait of a good-looking person, perfect face, 25 years old, casual wear, high quality, high resolution, 8k, RAW photo, best quality, masterpiece, ultra-high resolution"
   
-  // 确定要生成的性别（相反性别）
-  let shouldGenerateMale: boolean
-  let detectedGender: string
-  let confidence: string
+  const genderSpecifics = targetGender === 'male' 
+    ? "a handsome man, beautiful boy, masculine features" 
+    : "a beautiful woman, pretty girl, feminine features, soft skin"
   
-  if (hasFemaleTerm && !hasMaleTerm) {
-    detectedGender = '女性'
-    shouldGenerateMale = true // 如果上传的是女性，生成男性
-    confidence = '高'
-  } else if (hasMaleTerm && !hasFemaleTerm) {
-    detectedGender = '男性'
-    shouldGenerateMale = false // 如果上传的是男性，生成女性
-    confidence = '高'
-  } else {
-    detectedGender = '未知（默认女性）'
-    shouldGenerateMale = true
-    confidence = '低'
-  }
-  
-  return { detectedGender, shouldGenerateMale, confidence }
+  // img_uc a an is a trigger word for PhotoMaker
+  return `img_uc a ${genderSpecifics}, ${basePrompt}`
 }
 
-// 构建 AI 提示词 - 根据文件名自动检测性别并生成相反性别的另一半
-function buildPrompt(imageFile: File): string {
-  const { shouldGenerateMale } = detectGender(imageFile)
+// 负面提示词构建函数 - 现在也基于性别参数
+function buildNegativePrompt(targetGender: 'male' | 'female'): string {
+  const baseNegative = "nsfw, nude, naked, ugly, deformed, noisy, blurry, distorted, grain, low resolution, pixelated, doll, cartoon, anime, 3d, painting, drawing, sketch, couple, two people, group"
   
-  if (shouldGenerateMale) {
-    // 生成男性另一半
-    return `
-      img handsome man portrait, male person, masculine features, man's face,
-      single person portrait, solo headshot, one person only, individual photograph,
-      realistic human portrait, natural skin texture, real human face, 
-      photographic style, shot with DSLR camera, natural lighting,
-      attractive male person, genuine smile, looking at camera,
-      professional headshot photography, high quality photo, studio portrait,
-      realistic facial features, natural human appearance, no cartoon no anime,
-      photojournalism style, documentary photography, individual person portrait,
-      masculine jawline, male characteristics, man, handsome guy
-    `.trim()
-  } else {
-    // 生成女性另一半
-    return `
-      img beautiful woman portrait, female person, feminine features, woman's face,
-      single person portrait, solo headshot, one person only, individual photograph,
-      realistic human portrait, natural skin texture, real human face, 
-      photographic style, shot with DSLR camera, natural lighting,
-      attractive female person, genuine smile, looking at camera,
-      professional headshot photography, high quality photo, studio portrait,
-      realistic facial features, natural human appearance, no cartoon no anime,
-      photojournalism style, documentary photography, individual person portrait,
-      feminine features, female characteristics, woman, beautiful lady
-    `.trim()
-  }
+  // 避免生成错误性别的加强提示
+  const genderExclusion = targetGender === 'male' ? "woman, girl, female" : "man, boy, male"
+  
+  return `${baseNegative}, ${genderExclusion}`
 }
 
-// 构建负面提示词 - 根据性别确保不生成错误性别
-function buildNegativePrompt(imageFile: File): string {
-  const { shouldGenerateMale } = detectGender(imageFile)
-  
-  let genderSpecificNegative = ''
-  if (shouldGenerateMale) {
-    // 要生成男性，所以排除女性特征
-    genderSpecificNegative = 'woman, female, girl, feminine features, female person, lady, feminine face, feminine appearance, long hair, makeup, lipstick, earrings, dress, skirt,'
-  } else {
-    // 要生成女性，所以排除男性特征
-    genderSpecificNegative = 'man, male, boy, masculine features, male person, gentleman, masculine face, masculine appearance, beard, mustache, facial hair, suit, tie,'
-  }
-  
-  return `
-    ${genderSpecificNegative}
-    couple, two people, multiple people, together, romantic couple, pair, duo,
-    hugging, kissing, embracing, relationship photo, dating photo, wedding,
-    group photo, family photo, multiple faces, two faces, people together,
-    cartoon, anime, manga, animated, illustration, drawing, painting, sketch,
-    comic book style, cel shading, 2D art, digital art, stylized, unrealistic,
-    blurry, out of focus, low quality, low resolution, pixelated, distorted, 
-    side view, profile, back view, looking away, closed eyes, sunglasses, 
-    deformed, ugly, bad anatomy, bad proportions, 
-    cropped face, partial face, dark lighting, overexposed, underexposed,
-    artistic style, non-photographic, fantasy art, CGI render
-  `.trim()
-}
-
-// 检查 API 配置
+// 检查 Replicate API 配置
 export function checkReplicateConfig(): { configured: boolean; mode: 'real' | 'mock' } {
-  // 检查是否有有效的 API Token
-  const hasValidToken = process.env.REPLICATE_API_TOKEN && 
-                       process.env.REPLICATE_API_TOKEN.trim() !== '' &&
-                       process.env.REPLICATE_API_TOKEN !== 'your-replicate-token-here'
-  
-  if (hasValidToken) {
-    return { configured: true, mode: 'real' }
-  } else {
-    // 如果没有配置有效 token，使用模拟模式（适用于演示）
-    return { configured: true, mode: 'mock' }
+  const hasToken = process.env.REPLICATE_API_TOKEN && 
+                   process.env.REPLICATE_API_TOKEN.trim() !== '' &&
+                   process.env.REPLICATE_API_TOKEN !== 'your-replicate-token-here'
+                   
+  return {
+    configured: hasToken,
+    mode: hasToken ? 'real' : 'mock'
   }
 } 

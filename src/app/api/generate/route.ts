@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     // 获取上传的文件
     const formData = await request.formData()
     const file = formData.get('image') as File
+    const gender = formData.get('gender') as 'male' | 'female' | null
 
     if (!file) {
       return NextResponse.json(
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
     })
 
     // 调用 AI 生成
-    const generatedImageUrl = await generateSoulmate(file)
+    const generatedImageUrl = await generateSoulmate(file, gender)
 
     console.log('✅ AI 生成完成，URL:', generatedImageUrl)
 
