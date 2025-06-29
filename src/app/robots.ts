@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/admin/'],
     },
-    sitemap: 'https://aisoulmatevision.com/sitemap.xml',
+    sitemap: 'https://aisoulmatevision.online/sitemap.xml',
   }
 } 

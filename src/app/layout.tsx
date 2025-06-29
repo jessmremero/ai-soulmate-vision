@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'AI Soulmate Vision - Generate Your Perfect Match',
     description: 'Upload a photo and let AI generate your ideal soulmate in 30 seconds. Free, fast, and privacy-protected.',
-    url: 'https://aisoulmatevision.com',
+    url: 'https://aisoulmatevision.online',
     siteName: 'AI Soulmate Vision',
     images: [
       {
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     images: ['/og-image.png']
   },
   alternates: {
-    canonical: 'https://aisoulmatevision.com',
+    canonical: 'https://aisoulmatevision.online',
   },
   verification: {
     google: 'your-google-verification-code',
