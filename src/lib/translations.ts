@@ -80,6 +80,72 @@ export const translations = {
         generateMale: "男生"
       }
     },
+
+    questionnaire: {
+      title: "生成你的灵魂伴侣档案",
+      subtitle: "回答6个问题，AI将为你描绘TA的独特形象",
+      step: "第 {step} 步，共 {total} 步",
+      questions: {
+        q1: {
+          question: "你理想伴侣的生活态度是什么？",
+          options: [
+            "冒险型，喜欢尝试新事物",
+            "平静型，享受安稳平静的生活",
+            "野心型，总是追求目标",
+            "关爱型，重视关系和家庭"
+          ]
+        },
+        q2: {
+          question: "在伴侣身上，你最看重的核心价值观是什么？",
+          options: [
+            "诚实和透明",
+            "善良和同理心",
+            "独立和自主",
+            "幽默和积极"
+          ]
+        },
+        q3: {
+          question: "你理想伴侣的休闲方式是什么？",
+          options: [
+            "户外探索或旅行",
+            "阅读、学习或创意爱好",
+            "与朋友和家人社交",
+            "志愿服务或帮助他人"
+          ]
+        },
+        q4: {
+          question: "你理想伴侣的沟通风格是什么？",
+          options: [
+            "开放直接",
+            "深思熟虑",
+            "轻松愉快",
+            "支持鼓励"
+          ]
+        },
+        q5: {
+          question: "以下哪种最能描述你理想伴侣的人生观？",
+          options: [
+            "乐观积极，总是看到光明面",
+            "现实务实",
+            "热情驱动",
+            "随和轻松"
+          ]
+        },
+        q6: {
+          question: "用几个词描述，你如何定义伴侣的'灵魂感'？",
+          example: "例如：深度连接、神奇火花、诚实、激励人心"
+        }
+      },
+      buttons: {
+        back: "返回",
+        next: "下一步",
+        generate: "生成",
+        generating: "生成中..."
+      },
+      validation: {
+        required: "此题为必填项"
+      }
+    },
     
     howItWorks: {
       title: "工作原理",
@@ -284,6 +350,72 @@ export const translations = {
         targetGender: "Target Gender",
         generateFemale: "Female",
         generateMale: "Male"
+      }
+    },
+
+    questionnaire: {
+      title: "Generate Your Soulmate Profile",
+      subtitle: "Answer 6 questions and let AI paint a unique portrait of your ideal match",
+      step: "Step {step} of {total}",
+      questions: {
+        q1: {
+          question: "What is your ideal partner's approach to life?",
+          options: [
+            "Adventurous and loves trying new things",
+            "Calm and enjoys a peaceful, steady life",
+            "Ambitious and always striving for goals",
+            "Caring and prioritizes relationships and family"
+          ]
+        },
+        q2: {
+          question: "Which core value is most important to you in a partner?",
+          options: [
+            "Honesty and transparency",
+            "Kindness and empathy",
+            "Independence and self-reliance",
+            "Humor and positivity"
+          ]
+        },
+        q3: {
+          question: "How does your ideal partner spend their free time?",
+          options: [
+            "Exploring the outdoors or traveling",
+            "Reading, learning, or creative hobbies",
+            "Socializing with friends and family",
+            "Volunteering or helping others"
+          ]
+        },
+        q4: {
+          question: "What is your ideal partner's communication style?",
+          options: [
+            "Open and direct",
+            "Thoughtful and reflective",
+            "Playful and light-hearted",
+            "Supportive and encouraging"
+          ]
+        },
+        q5: {
+          question: "Which of these best describes your ideal partner's outlook on life?",
+          options: [
+            "Optimistic and always sees the bright side",
+            "Realistic and practical",
+            "Passionate and driven",
+            "Laid-back and easygoing"
+          ]
+        },
+        q6: {
+          question: "Using a few words, how would you define 'soulfulness' in a partner?",
+          example: "e.g. Deep connection, magical spark, honest, inspiring"
+        }
+      },
+      buttons: {
+        back: "Back",
+        next: "Next",
+        generate: "Generate",
+        generating: "Generating..."
+      },
+      validation: {
+        required: "This question is required"
       }
     },
     
@@ -493,6 +625,72 @@ export const translations = {
         generateMale: "男性"
       }
     },
+
+    questionnaire: {
+      title: "あなたの運命の人のプロフィールを生成",
+      subtitle: "6つの質問に答えて、AIがあなたの理想的なマッチのユニークな肖像を描きます",
+      step: "ステップ {step} / {total}",
+      questions: {
+        q1: {
+          question: "あなたの理想的なパートナーの人生へのアプローチは何ですか？",
+          options: [
+            "冒険的で新しいことを試すのが好き",
+            "穏やかで平和で安定した生活を楽しむ",
+            "野心的で常に目標を追求する",
+            "思いやりがあり、関係と家族を優先する"
+          ]
+        },
+        q2: {
+          question: "パートナーにおいて、あなたが最も重視する核心的価値は何ですか？",
+          options: [
+            "誠実さと透明性",
+            "優しさと共感",
+            "独立と自立",
+            "ユーモアとポジティブさ"
+          ]
+        },
+        q3: {
+          question: "あなたの理想的なパートナーは自由時間をどのように過ごしますか？",
+          options: [
+            "アウトドア探索や旅行",
+            "読書、学習、または創造的な趣味",
+            "友人や家族との社交",
+            "ボランティアや他人を助けること"
+          ]
+        },
+        q4: {
+          question: "あなたの理想的なパートナーのコミュニケーションスタイルは何ですか？",
+          options: [
+            "オープンで直接的",
+            "思慮深く反省的",
+            "遊び心があり軽快",
+            "支持的で励まし"
+          ]
+        },
+        q5: {
+          question: "以下の中で、あなたの理想的なパートナーの人生観を最もよく表すものは何ですか？",
+          options: [
+            "楽観的で常に明るい面を見る",
+            "現実的で実用的",
+            "情熱的で駆動的",
+            "リラックスして気楽"
+          ]
+        },
+        q6: {
+          question: "いくつかの言葉で、パートナーの「魂の深さ」をどのように定義しますか？",
+          example: "例：深い絆、魔法のような火花、誠実、インスピレーション"
+        }
+      },
+      buttons: {
+        back: "戻る",
+        next: "次へ",
+        generate: "生成",
+        generating: "生成中..."
+      },
+      validation: {
+        required: "この質問は必須です"
+      }
+    },
     
     howItWorks: {
       title: "仕組み",
@@ -696,6 +894,72 @@ export const translations = {
         targetGender: "생성할 성별",
         generateFemale: "여성",
         generateMale: "남성"
+      }
+    },
+
+    questionnaire: {
+      title: "당신의 운명의 상대 프로필 생성",
+      subtitle: "6개의 질문에 답하고 AI가 당신의 이상적인 매치의 독특한 초상을 그립니다",
+      step: "단계 {step} / {total}",
+      questions: {
+        q1: {
+          question: "당신의 이상적인 파트너의 삶에 대한 접근 방식은 무엇인가요?",
+          options: [
+            "모험적이고 새로운 것을 시도하는 것을 좋아함",
+            "평온하고 안정적인 삶을 즐김",
+            "야심적이고 항상 목표를 추구함",
+            "배려심이 많고 관계와 가족을 우선시함"
+          ]
+        },
+        q2: {
+          question: "파트너에게서 당신이 가장 중요하게 생각하는 핵심 가치는 무엇인가요?",
+          options: [
+            "정직함과 투명성",
+            "친절함과 공감능력",
+            "독립성과 자립성",
+            "유머감각과 긍정성"
+          ]
+        },
+        q3: {
+          question: "당신의 이상적인 파트너는 여가 시간을 어떻게 보내나요?",
+          options: [
+            "야외 탐험이나 여행",
+            "독서, 학습, 또는 창의적인 취미",
+            "친구와 가족과의 사교",
+            "자원봉사나 다른 사람 돕기"
+          ]
+        },
+        q4: {
+          question: "당신의 이상적인 파트너의 의사소통 스타일은 무엇인가요?",
+          options: [
+            "개방적이고 직접적",
+            "사려깊고 성찰적",
+            "장난스럽고 가벼운",
+            "지지적이고 격려적"
+          ]
+        },
+        q5: {
+          question: "다음 중 당신의 이상적인 파트너의 인생관을 가장 잘 설명하는 것은 무엇인가요?",
+          options: [
+            "낙관적이고 항상 밝은 면을 봄",
+            "현실적이고 실용적",
+            "열정적이고 추진력 있음",
+            "느긋하고 편안함"
+          ]
+        },
+        q6: {
+          question: "몇 마디로 파트너의 '영혼의 깊이'를 어떻게 정의하시나요?",
+          example: "예: 깊은 연결, 마법 같은 스파크, 정직함, 영감"
+        }
+      },
+      buttons: {
+        back: "뒤로",
+        next: "다음",
+        generate: "생성",
+        generating: "생성 중..."
+      },
+      validation: {
+        required: "이 질문은 필수입니다"
       }
     },
     

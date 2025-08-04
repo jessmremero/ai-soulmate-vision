@@ -10,7 +10,9 @@ export const AI_MODELS = {
   // 使用专门的人脸生成模型，专注于单人肖像
   FACE_GENERATION: 'tencentarc/photomaker:ddfc2b08d209f9fa8c1eca692712918bd449f695dabb4a958da31802a9570fe4',
   // 备用模型（如果主模型有问题）
-  FACE_GENERATION_BACKUP: 'stability-ai/stable-diffusion:27b93a2413e7f36cd83da926f3656280b2931564ff050bf9575f1fdf9bcd7478'
+  FACE_GENERATION_BACKUP: 'stability-ai/stable-diffusion:27b93a2413e7f36cd83da926f3656280b2931564ff050bf9575f1fdf9bcd7478',
+  // 文本生成模型 - 用于生成理想伴侣描述
+  TEXT_GENERATION: 'meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3'
 }
 
 // 生成另一半照片的主函数
@@ -138,6 +140,56 @@ export async function generateSoulmate(
   }
 }
 
+// 生成理想伴侣文字描述
+export async function generateSoulmateDescription(
+  questionnaireAnswers: (string | null)[],
+  userLanguage: string = 'zh'
+): Promise<string> {
+  const hasValidToken = process.env.REPLICATE_API_TOKEN && 
+                       process.env.REPLICATE_API_TOKEN.trim() !== '' &&
+                       process.env.REPLICATE_API_TOKEN !== 'your-replicate-token-here'
+
+  if (!hasValidToken) {
+    console.log('🎭 未检测到有效的 Replicate API Token，使用演示模式')
+    return generateMockDescription(questionnaireAnswers, userLanguage)
+  }
+
+  try {
+    console.log('🚀 开始生成理想伴侣描述...')
+    
+    // 构建多语言提示词
+    const prompt = buildDescriptionPrompt(questionnaireAnswers, userLanguage)
+    console.log('📝 描述生成提示词:', prompt)
+    
+    // 调用 Llama-2 模型
+    const output = await Promise.race([
+      replicate.run(AI_MODELS.TEXT_GENERATION as any, {
+        input: {
+          prompt: prompt,
+          max_new_tokens: 300,
+          temperature: 0.7,
+          top_p: 0.9,
+          repetition_penalty: 1.1
+        }
+      }),
+      // 30秒超时
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('文字生成超时')), 30000)
+      )
+    ])
+    
+    console.log('✅ 文字描述生成完成:', output)
+    
+    // 返回生成的文字
+    const result = Array.isArray(output) ? output.join('') : String(output)
+    return result.trim()
+    
+  } catch (error) {
+    console.error('❌ 文字生成错误:', error)
+    return generateMockDescription(questionnaireAnswers, userLanguage)
+  }
+}
+
 // 增强版模拟 AI 生成功能
 async function generateMockSoulmate(
   imageFile: File,
@@ -190,6 +242,53 @@ async function generateMockSoulmate(
   return selectedImage
 }
 
+// 模拟文字描述生成
+function generateMockDescription(answers: (string | null)[], language: string): string {
+  const mockDescriptions = {
+    zh: `基于您的问卷答案，我为您描绘的理想伴侣是这样的：
+
+她/他拥有温暖而坚定的内心，在生活中既保持着对美好事物的敏感，又具备面对挑战的勇气。在价值观上，她/他重视真诚与理解，能够在你需要时给予支持，在快乐时分享喜悦。
+
+她/他喜欢在闲暇时光探索生活的美好，无论是阅读一本好书，还是与朋友分享温馨时光，都能让生活充满色彩。在沟通中，她/他善于倾听，能够理解你的想法，同时也会坦诚地表达自己的观点。
+
+她/他看待生活时既保持乐观，又脚踏实地，能够在梦想与现实之间找到平衡。最重要的是，她/他拥有那种让你感到心灵相通的"灵魂感"——那种无需言语就能理解彼此的默契，那种在一起时能让时光变得美好的魔力。
+
+这样的她/他，正是你内心深处一直在寻找的那个人。`,
+
+    en: `Based on your questionnaire answers, here's the ideal partner I envision for you:
+
+She/he possesses a warm yet determined heart, maintaining sensitivity to beautiful things in life while having the courage to face challenges. In terms of values, she/he values sincerity and understanding, able to provide support when you need it and share joy in happy moments.
+
+She/he enjoys exploring life's beauty in leisure time, whether reading a good book or sharing warm moments with friends, making life colorful. In communication, she/he is a good listener who can understand your thoughts while honestly expressing her/his own views.
+
+She/he maintains optimism while staying grounded when viewing life, able to find balance between dreams and reality. Most importantly, she/he possesses that "soulfulness" that makes you feel spiritually connected—that默契 that doesn't need words to understand each other, that magic that makes time beautiful when together.
+
+Such a person is exactly who you've been searching for deep in your heart.`,
+
+    ja: `あなたのアンケート回答に基づいて、理想のパートナーをこのように描きます：
+
+彼/彼女は温かくも確かな心を持ち、人生の美しいものへの感受性を保ちながら、挑戦に立ち向かう勇気も備えています。価値観において、彼/彼女は誠実さと理解を重視し、あなたが必要とする時にサポートを提供し、幸せな時に喜びを分かち合うことができます。
+
+彼/彼女は余暇の時間に人生の美しさを探求することを楽しみ、良い本を読むことでも、友達と温かい時間を共有することでも、人生をカラフルにすることができます。コミュニケーションにおいて、彼/彼女は良い聞き手で、あなたの考えを理解しながら、自分の意見を正直に表現することができます。
+
+彼/彼女は人生を見る時に楽観的でありながらも現実的で、夢と現実の間のバランスを見つけることができます。最も重要なのは、彼/彼女はあなたに精神的につながっていると感じさせる「魂の深さ」を持っていることです—言葉を必要としない相互理解、一緒にいる時に時間を美しくする魔法。
+
+そんな彼/彼女こそ、あなたが心の奥底で探し求めていた人なのです。`,
+
+    ko: `귀하의 설문조사 답변을 바탕으로, 귀하를 위한 이상적인 파트너를 이렇게 그려봅니다:
+
+그/그녀는 따뜻하면서도 확고한 마음을 가지고 있으며, 삶의 아름다운 것들에 대한 감수성을 유지하면서도 도전에 맞설 용기를 갖추고 있습니다. 가치관 면에서, 그/그녀는 진실성과 이해를 중시하며, 귀하가 필요로 할 때 지원을 제공하고, 행복한 순간에 기쁨을 나눌 수 있습니다.
+
+그/그녀는 여가 시간에 삶의 아름다움을 탐구하는 것을 즐기며, 좋은 책을 읽거나 친구들과 따뜻한 시간을 공유하는 것 모두 삶을 다채롭게 만들 수 있습니다. 소통에서, 그/그녀는 좋은 청취자로서 귀하의 생각을 이해하면서도 자신의 견해를 솔직하게 표현할 수 있습니다.
+
+그/그녀는 삶을 바라볼 때 낙관적이면서도 현실적이어서, 꿈과 현실 사이의 균형을 찾을 수 있습니다. 가장 중요한 것은, 그/그녀는 귀하에게 영적으로 연결되어 있다고 느끼게 하는 "영혼의 깊이"를 가지고 있다는 것입니다—말이 필요 없는 상호 이해, 함께 있을 때 시간을 아름답게 만드는 마법.
+
+그런 그/그녀야말로, 귀하가 마음 깊은 곳에서 찾아왔던 사람입니다.`
+  }
+  
+  return mockDescriptions[language as keyof typeof mockDescriptions] || mockDescriptions.zh
+}
+
 // 文件转 base64 (服务器端版本)
 async function fileToBase64(file: File): Promise<string> {
   try {
@@ -230,6 +329,75 @@ function buildNegativePrompt(targetGender: 'male' | 'female'): string {
   const genderExclusion = targetGender === 'male' ? "woman, girl, female" : "man, boy, male"
   
   return `${baseNegative}, ${genderExclusion}`
+}
+
+// 构建描述生成提示词
+function buildDescriptionPrompt(answers: (string | null)[], language: string): string {
+  const questions = [
+    "理想伴侣的生活态度",
+    "最重要的核心价值观", 
+    "理想伴侣的休闲方式",
+    "理想伴侣的沟通风格",
+    "理想伴侣的人生观",
+    "对'灵魂感'的定义"
+  ]
+  
+  const validAnswers = answers.filter(answer => answer && answer.trim() !== '')
+  const answerText = validAnswers.map((answer, index) => 
+    `${questions[index]}: ${answer}`
+  ).join('\n')
+  
+  const languagePrompts = {
+    zh: `基于以下问卷答案，生成一段200-300字的理想伴侣描述，要求：
+1. 语言优美，富有诗意
+2. 体现用户的真实偏好
+3. 描述具体而生动
+4. 带有浪漫和期待感
+5. 使用中文写作
+
+问卷答案：
+${answerText}
+
+请生成理想伴侣描述：`,
+    
+    en: `Based on the following questionnaire answers, generate a 200-300 word description of an ideal partner. Requirements:
+1. Beautiful and poetic language
+2. Reflect the user's real preferences  
+3. Specific and vivid description
+4. Romantic and hopeful tone
+5. Write in English
+
+Questionnaire answers:
+${answerText}
+
+Please generate the ideal partner description:`,
+    
+    ja: `以下のアンケート回答に基づいて、理想のパートナーの200-300文字の説明を生成してください。要件：
+1. 美しく詩的な言語
+2. ユーザーの実際の好みを反映
+3. 具体的で生き生きとした説明
+4. ロマンチックで希望に満ちたトーン
+5. 日本語で書く
+
+アンケート回答：
+${answerText}
+
+理想のパートナーの説明を生成してください：`,
+    
+    ko: `다음 설문조사 답변을 바탕으로 이상적인 파트너에 대한 200-300자 설명을 생성하세요. 요구사항:
+1. 아름답고 시적인 언어
+2. 사용자의 실제 선호도 반영
+3. 구체적이고 생생한 설명
+4. 로맨틱하고 희망찬 톤
+5. 한국어로 작성
+
+설문조사 답변:
+${answerText}
+
+이상적인 파트너 설명을 생성해주세요:`
+  }
+  
+  return languagePrompts[language as keyof typeof languagePrompts] || languagePrompts.zh
 }
 
 // 检查 Replicate API 配置
