@@ -17,6 +17,7 @@ export default function UploadSection() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null)
   const [targetGender, setTargetGender] = useState<'male' | 'female'>('female')
+  const [selectedStyle, setSelectedStyle] = useState<'photorealistic' | 'anime' | 'cartoon' | 'oilPainting' | 'cyberpunk' | 'retro'>('photorealistic')
   const [isImageLoading, setIsImageLoading] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false)
@@ -129,6 +130,7 @@ export default function UploadSection() {
       const formData = new FormData()
       formData.append('image', selectedFile)
       formData.append('gender', targetGender)
+      formData.append('style', selectedStyle)
       
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -165,6 +167,7 @@ export default function UploadSection() {
     setIsGenerating(false)
     setGeneratedImageUrl(null)
     setIsImageLoading(false)
+    setSelectedStyle('photorealistic') // 重置风格选择
   }
 
   const handleRegenerate = () => {
@@ -501,6 +504,37 @@ export default function UploadSection() {
                     >
                       {t('upload.ui.generateMale')}
                     </button>
+                  </div>
+                </div>
+
+                {/* 风格选择器 */}
+                <div className="mb-6">
+                  <span className="text-gray-700 dark:text-gray-300 mr-4 font-semibold">{t('upload.ui.styleSelection')}:</span>
+                  <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto">
+                    {[
+                      { key: 'photorealistic', icon: '📸' },
+                      { key: 'anime', icon: '🎌' },
+                      { key: 'cartoon', icon: '🎨' },
+                      { key: 'oilPainting', icon: '🖼️' },
+                      { key: 'cyberpunk', icon: '🤖' },
+                      { key: 'retro', icon: '📻' }
+                    ].map((style) => (
+                      <button
+                        key={style.key}
+                        type="button"
+                        onClick={() => setSelectedStyle(style.key as any)}
+                        className={`p-3 text-sm font-medium transition-all duration-200 rounded-lg border flex-shrink-0 ${
+                          selectedStyle === style.key
+                            ? 'bg-purple-500 text-white border-purple-500 shadow-lg scale-105'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-purple-50 hover:border-purple-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700'
+                        } focus:z-10 focus:ring-2 focus:ring-purple-400`}
+                      >
+                        <div className="flex flex-col items-center space-y-1">
+                          <span className="text-lg">{style.icon}</span>
+                          <span className="text-xs">{t(`upload.ui.styles.${style.key}`)}</span>
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 </div>
 

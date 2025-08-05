@@ -1,5 +1,8 @@
 import Replicate from 'replicate'
 
+// 风格类型定义
+export type StyleType = 'photorealistic' | 'anime' | 'cartoon' | 'oilPainting' | 'cyberpunk' | 'retro'
+
 // 初始化 Replicate 客户端
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -7,10 +10,10 @@ const replicate = new Replicate({
 
 // AI 模型配置
 export const AI_MODELS = {
-  // 使用专门的人脸生成模型，专注于单人肖像
+  // 使用专门的人脸生成模型，专注于单人肖像（写实风格）
   FACE_GENERATION: 'tencentarc/photomaker:ddfc2b08d209f9fa8c1eca692712918bd449f695dabb4a958da31802a9570fe4',
-  // 备用模型（如果主模型有问题）
-  FACE_GENERATION_BACKUP: 'stability-ai/stable-diffusion:27b93a2413e7f36cd83da926f3656280b2931564ff050bf9575f1fdf9bcd7478',
+  // 艺术风格生成模型（动漫、卡通、油画等）- 使用更快的模型
+  ART_STYLE_GENERATION: 'stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b',
   // 文本生成模型 - 用于生成理想伴侣描述
   TEXT_GENERATION: 'meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3'
 }
@@ -18,7 +21,8 @@ export const AI_MODELS = {
 // 生成另一半照片的主函数
 export async function generateSoulmate(
   imageFile: File,
-  targetGender: 'male' | 'female' | null
+  targetGender: 'male' | 'female' | null,
+  style: StyleType = 'photorealistic'
 ): Promise<string> {
   // 首先检查是否有有效的 API Token
   const hasValidToken = process.env.REPLICATE_API_TOKEN && 
@@ -31,7 +35,7 @@ export async function generateSoulmate(
   // 如果没有有效的API Token，直接使用模拟模式
   if (!hasValidToken) {
     console.log('🎭 未检测到有效的 Replicate API Token，使用演示模式')
-    return generateMockSoulmate(imageFile, finalGender)
+    return generateMockSoulmate(imageFile, finalGender, style)
   }
 
   try {
@@ -51,38 +55,53 @@ export async function generateSoulmate(
     // 基于用户选择构建 Prompt
     console.log('🎯 目标生成性别:', finalGender)
     
-    // 构建 prompt - 根据性别检测自动生成相应的提示词
-    const prompt = buildPrompt(finalGender)
+    // 根据风格选择模型
+    const isPhotorealistic = style === 'photorealistic'
+    const selectedModel = isPhotorealistic ? AI_MODELS.FACE_GENERATION : AI_MODELS.ART_STYLE_GENERATION
+    
+    // 构建 prompt - 根据性别和风格生成相应的提示词
+    const prompt = buildPrompt(finalGender, style)
     console.log('📝 Prompt:', prompt)
     
-    // 构建负面提示词 - 强烈排除情侣照和卡通风格，并确保性别正确性
-    const negativePrompt = buildNegativePrompt(finalGender)
+    // 构建负面提示词 - 根据风格调整负面提示词
+    const negativePrompt = buildNegativePrompt(finalGender, style)
     console.log('🚫 Negative Prompt:', negativePrompt)
     
-    // 准备 API 参数 - PhotoMaker模型专用参数
-    const apiInput = {
-      prompt: prompt,
-      negative_prompt: negativePrompt,  
-      input_image: imageBase64,  // PhotoMaker需要input_image而不是image
-      num_outputs: 1,
-      num_inference_steps: 20,
-      guidance_scale: 7.5,
-      seed: Math.floor(Math.random() * 1000000)
-    }
+         // 准备 API 参数 - 根据模型类型调整参数
+     const apiInput = isPhotorealistic ? {
+       // PhotoMaker模型参数
+       prompt: prompt,
+       negative_prompt: negativePrompt,  
+       input_image: imageBase64,  // PhotoMaker需要input_image
+       num_outputs: 1,
+       num_inference_steps: 20,
+       guidance_scale: 7.5,
+       seed: Math.floor(Math.random() * 1000000)
+     } : {
+               // SDXL模型参数 - 优化速度和质量
+        prompt: prompt,
+        negative_prompt: negativePrompt,
+        image: imageBase64,  // SDXL使用image
+        num_outputs: 1,
+        num_inference_steps: 20,  // SDXL默认步数
+        guidance_scale: 9.0,      // 增加引导强度，强制性别转换
+        seed: Math.floor(Math.random() * 1000000)
+     }
     
-    console.log('🤖 调用 AI 模型:', AI_MODELS.FACE_GENERATION)
-    console.log('⚙️ API 参数:', { ...apiInput, input_image: '[BASE64_DATA]' })
+    console.log('🤖 调用 AI 模型:', selectedModel)
+    console.log('🎨 风格类型:', isPhotorealistic ? '写实风格 (PhotoMaker)' : '艺术风格 (Stable Diffusion)')
+    console.log('⚙️ API 参数:', { ...apiInput, [isPhotorealistic ? 'input_image' : 'image']: '[BASE64_DATA]' })
     
-    // 调用 Replicate API 带超时
-    const output = await Promise.race([
-      replicate.run(AI_MODELS.FACE_GENERATION as any, {
-        input: apiInput
-      }),
-      // 2分钟超时，快速生成真实照片
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('AI 生成超时，请稍后重试')), 120000)
-      )
-    ])
+         // 调用 Replicate API 带超时
+     const output = await Promise.race([
+       replicate.run(selectedModel as any, {
+         input: apiInput
+       }),
+       // 90秒超时，平衡速度和质量
+       new Promise((_, reject) => 
+         setTimeout(() => reject(new Error('AI 生成超时，请稍后重试')), 90000)
+       )
+     ])
     
     console.log('✅ AI 生成完成:', output)
     
@@ -128,15 +147,21 @@ export async function generateSoulmate(
         return generateMockSoulmate(imageFile, finalGender)
       }
       
-      // 超时错误 - 直接抛出，让用户知道可以重试
-      if (errorMessage.includes('timeout') || errorMessage.includes('超时')) {
-        throw new Error('AI 生成超时，请稍后重试')
-      }
-    }
-    
-    // 对于其他未知错误，抛出错误而不是自动进入演示模式
-    console.log('⚠️ 遇到未知错误:', error)
-    throw new Error('AI服务暂时不可用，请稍后重试')
+             // 超时错误 - 直接抛出，让用户知道可以重试
+       if (errorMessage.includes('timeout') || errorMessage.includes('超时')) {
+         throw new Error('AI 生成超时，请稍后重试')
+       }
+       
+       // NSFW 内容检测错误 - 自动切换到演示模式
+       if (errorMessage.includes('nsfw') || errorMessage.includes('content detected')) {
+         console.log('🚫 检测到 NSFW 内容过滤，切换到演示模式')
+         return generateMockSoulmate(imageFile, finalGender, style)
+       }
+     }
+     
+     // 对于其他未知错误，抛出错误而不是自动进入演示模式
+     console.log('⚠️ 遇到未知错误:', error)
+     throw new Error('AI服务暂时不可用，请稍后重试')
   }
 }
 
@@ -193,7 +218,8 @@ export async function generateSoulmateDescription(
 // 增强版模拟 AI 生成功能
 async function generateMockSoulmate(
   imageFile: File,
-  targetGender: 'male' | 'female'
+  targetGender: 'male' | 'female',
+  style: StyleType = 'photorealistic'
 ): Promise<string> {
   console.log('🎭 使用演示模式生成另一半照片...')
   
@@ -309,26 +335,57 @@ async function fileToBase64(file: File): Promise<string> {
   }
 }
 
-// 提示词构建函数 - 现在基于明确的性别参数
-function buildPrompt(targetGender: 'male' | 'female'): string {
-  const basePrompt = "A photorealistic portrait of a good-looking person, perfect face, 25 years old, casual wear, high quality, high resolution, 8k, RAW photo, best quality, masterpiece, ultra-high resolution"
-  
+// 提示词构建函数 - 基于性别和风格参数
+function buildPrompt(targetGender: 'male' | 'female', style: StyleType = 'photorealistic'): string {
+  // 明确的性别描述，确保生成正确性别
   const genderSpecifics = targetGender === 'male' 
-    ? "a handsome man, beautiful boy, masculine features" 
-    : "a beautiful woman, pretty girl, feminine features, soft skin"
+    ? "anime boy, male anime character, handsome anime male" 
+    : "female anime girl, cute anime girl, kawaii girl, beautiful anime female, gentle anime girl, girl character, female character, woman anime, lady anime"
   
-  // img_uc a an is a trigger word for PhotoMaker
-  return `img_uc a ${genderSpecifics}, ${basePrompt}`
+  // 根据风格构建不同的基础提示词，强调单人肖像
+  const stylePrompts = {
+    photorealistic: "A photorealistic portrait of a single person, solo portrait, perfect face, 25 years old, casual wear, high quality, high resolution, 8k, RAW photo, best quality, masterpiece, ultra-high resolution, one person only",
+    anime: "kawaii, japanese anime, manga style, large round eyes, soft features, gentle expression, cute anime girl, traditional anime, school uniform, soft colors, innocent look, high quality, masterpiece, best quality, safe content",
+    cartoon: "cartoon style portrait, single character, solo cartoon character, bold lines, vibrant colors, cute cartoon character, high quality cartoon art, clean illustration, family friendly, one person only",
+    oilPainting: "oil painting style portrait, single subject, solo portrait, brush strokes, canvas texture, artistic painting, classical art style, masterpiece, high quality, elegant, one person only",
+    cyberpunk: "cyberpunk style portrait, single character, solo cyberpunk character, neon lights, futuristic, sci-fi aesthetic, glowing elements, high tech, dystopian beauty, high quality, safe, one person only",
+    retro: "retro style portrait, single character, solo retro character, vintage aesthetic, 80s style, nostalgic colors, classic beauty, old school charm, high quality, wholesome, one person only"
+  }
+  
+  const basePrompt = stylePrompts[style] || stylePrompts.photorealistic
+  
+  // 只有写实风格使用PhotoMaker的img_uc触发词
+  if (style === 'photorealistic') {
+    return `img_uc a ${genderSpecifics}, ${basePrompt}`
+  }
+  
+  // 艺术风格使用Stable Diffusion格式
+  return `${genderSpecifics}, ${basePrompt}`
 }
 
-// 负面提示词构建函数 - 现在也基于性别参数
-function buildNegativePrompt(targetGender: 'male' | 'female'): string {
-  const baseNegative = "nsfw, nude, naked, ugly, deformed, noisy, blurry, distorted, grain, low resolution, pixelated, doll, cartoon, anime, 3d, painting, drawing, sketch, couple, two people, group"
+// 负面提示词构建函数 - 基于性别和风格参数
+function buildNegativePrompt(targetGender: 'male' | 'female', style: StyleType = 'photorealistic'): string {
+  // 基础负面提示词 - 增强安全内容过滤和多人场景排除
+  const baseNegative = "nsfw, nude, naked, ugly, deformed, noisy, blurry, distorted, grain, low resolution, pixelated, doll, couple, two people, group, multiple people, crowd, inappropriate, adult content, sexual content, multiple faces, multiple characters"
   
-  // 避免生成错误性别的加强提示
-  const genderExclusion = targetGender === 'male' ? "woman, girl, female" : "man, boy, male"
+  // 根据风格调整负面提示词
+  const styleNegatives = {
+    photorealistic: "cartoon, anime, 3d, painting, drawing, sketch",
+    anime: "photorealistic, realistic, human anatomy, realistic skin, western cartoon, disney, 3d, painting, drawing, sketch, robot, mechanical, cyberpunk, futuristic, glitch, digital art, abstract, distorted, neon, glowing, tech, sci-fi, artificial, synthetic, hard lines, sharp edges, geometric, angular",
+    cartoon: "photorealistic, anime, 3d, painting, drawing, sketch, realistic",
+    oilPainting: "photorealistic, cartoon, anime, 3d, drawing, sketch, realistic",
+    cyberpunk: "photorealistic, cartoon, anime, 3d, painting, drawing, sketch, realistic, vintage",
+    retro: "photorealistic, cartoon, anime, 3d, painting, drawing, sketch, realistic, futuristic, cyberpunk"
+  }
   
-  return `${baseNegative}, ${genderExclusion}`
+  const styleNegative = styleNegatives[style] || styleNegatives.photorealistic
+  
+  // 强烈排除错误性别，确保生成正确性别
+  const genderExclusion = targetGender === 'male' 
+    ? "woman, girl, female, feminine, female face, female portrait, female character, woman face, woman portrait, woman character, anime girl, female anime, beautiful girl, cute girl" 
+    : "man, boy, male, masculine, male face, male portrait, male character, man face, man portrait, man character, anime boy, male anime, handsome boy, cute boy"
+  
+  return `${baseNegative}, ${styleNegative}, ${genderExclusion}`
 }
 
 // 构建描述生成提示词

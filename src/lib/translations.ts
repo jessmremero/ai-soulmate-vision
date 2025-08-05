@@ -77,7 +77,16 @@ export const translations = {
         imageLoading: "图片加载中...",
         targetGender: "生成性别",
         generateFemale: "女生",
-        generateMale: "男生"
+        generateMale: "男生",
+        styleSelection: "选择风格",
+        styles: {
+          photorealistic: "写实风格",
+          anime: "动漫风格",
+          cartoon: "卡通风格",
+          oilPainting: "油画风格",
+          cyberpunk: "赛博朋克",
+          retro: "复古风格"
+        }
       }
     },
 
@@ -349,7 +358,16 @@ export const translations = {
         imageLoading: "Loading image...",
         targetGender: "Target Gender",
         generateFemale: "Female",
-        generateMale: "Male"
+        generateMale: "Male",
+        styleSelection: "Select Style",
+        styles: {
+          photorealistic: "Photorealistic",
+          anime: "Anime Style",
+          cartoon: "Cartoon Style",
+          oilPainting: "Oil Painting",
+          cyberpunk: "Cyberpunk",
+          retro: "Retro Style"
+        }
       }
     },
 
@@ -622,7 +640,16 @@ export const translations = {
         imageLoading: "画像読み込み中...",
         targetGender: "生成する性別",
         generateFemale: "女性",
-        generateMale: "男性"
+        generateMale: "男性",
+        styleSelection: "スタイルを選択",
+        styles: {
+          photorealistic: "フォトリアル",
+          anime: "アニメスタイル",
+          cartoon: "カートゥーンスタイル",
+          oilPainting: "油絵",
+          cyberpunk: "サイバーパンク",
+          retro: "レトロスタイル"
+        }
       }
     },
 
@@ -893,7 +920,16 @@ export const translations = {
         imageLoading: "이미지 로딩 중...",
         targetGender: "생성할 성별",
         generateFemale: "여성",
-        generateMale: "남성"
+        generateMale: "남성",
+        styleSelection: "스타일 선택",
+        styles: {
+          photorealistic: "포토리얼리스틱",
+          anime: "애니메 스타일",
+          cartoon: "카툰 스타일",
+          oilPainting: "유화",
+          cyberpunk: "사이버펑크",
+          retro: "레트로 스타일"
+        }
       }
     },
 

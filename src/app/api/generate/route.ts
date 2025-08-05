@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const file = formData.get('image') as File
     const gender = formData.get('gender') as 'male' | 'female' | null
+    const style = formData.get('style') as 'photorealistic' | 'anime' | 'cartoon' | 'oilPainting' | 'cyberpunk' | 'retro' || 'photorealistic'
 
     if (!file) {
       return NextResponse.json(
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
     })
 
     // 调用 AI 生成
-    const generatedImageUrl = await generateSoulmate(file, gender)
+    const generatedImageUrl = await generateSoulmate(file, gender, style)
 
     console.log('✅ AI 生成完成，URL:', generatedImageUrl)
 
