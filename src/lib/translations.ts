@@ -223,7 +223,8 @@ export const translations = {
       faq: "常见问题",
       contact: "联系我们",
       copyright: "© 2024 AI另一半视觉. 保留所有权利。",
-      disclaimer: "仅供娱乐使用，请勿上传他人照片 • 我们重视您的隐私，照片将在24小时后自动删除 • 生成图像仅供个人娱乐，请勿商业使用"
+      disclaimer: "仅供娱乐使用，请勿上传他人照片 • 我们重视您的隐私，照片将在24小时后自动删除 • 生成图像仅供个人娱乐，请勿商业使用",
+      partners: "合作伙伴"
     },
     
     privacy: {
@@ -504,7 +505,8 @@ export const translations = {
       faq: "FAQ",
       contact: "Contact", 
       copyright: "© 2024 AI Soulmate Vision. All rights reserved.",
-      disclaimer: "For entertainment only, do not upload others' photos • We respect your privacy, photos will be automatically deleted after 24 hours • Generated images are for personal entertainment only, not for commercial use"
+      disclaimer: "For entertainment only, do not upload others' photos • We respect your privacy, photos will be automatically deleted after 24 hours • Generated images are for personal entertainment only, not for commercial use",
+      partners: "Partners"
     },
     
     privacy: {
@@ -784,7 +786,8 @@ export const translations = {
       faq: "よくある質問",
       contact: "お問い合わせ",
       copyright: "© 2024 AI運命の人ビジョン. すべての権利予約。",
-      disclaimer: "エンターテイメント目的のみ、他人の写真をアップロードしないでください • プライバシーを尊重し、写真は24時間後に自動削除されます • 生成画像は個人的なエンターテイメント目的のみで、商業利用は禁止"
+      disclaimer: "エンターテイメント目的のみ、他人の写真をアップロードしないでください • プライバシーを尊重し、写真は24時間後に自動削除されます • 生成画像は個人的なエンターテイメント目的のみで、商業利用は禁止",
+      partners: "パートナー"
     },
     
     privacy: {
@@ -1064,7 +1067,8 @@ export const translations = {
       faq: "자주 묻는 질문", 
       contact: "문의하기",
       copyright: "© 2024 AI 운명의 상대 비전. 모든 권리 보유.",
-      disclaimer: "오락 목적으로만 사용하며, 타인의 사진을 업로드하지 마세요 • 개인정보를 존중하며, 사진은 24시간 후 자동 삭제됩니다 • 생성된 이미지는 개인 오락용으로만 사용하며 상업적 이용은 금지"
+      disclaimer: "오락 목적으로만 사용하며, 타인의 사진을 업로드하지 마세요 • 개인정보를 존중하며, 사진은 24시간 후 자동 삭제됩니다 • 생성된 이미지는 개인 오락용으로만 사용하며 상업적 이용은 금지",
+      partners: "파트너"
     },
     
     privacy: {

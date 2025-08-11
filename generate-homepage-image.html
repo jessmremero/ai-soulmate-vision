@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Soulmate Vision - Homepage Image Generator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .download-link {
+            display: none;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .download-link:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 AI Soulmate Vision - Homepage Image Generator</h1>
+        
+        <div class="canvas-container">
+            <canvas id="homepageCanvas" width="800" height="400"></canvas>
+        </div>
+        
+        <div class="controls">
+            <button onclick="generateImage()">Generate New Image</button>
+            <button onclick="downloadImage()">Download Image</button>
+        </div>
+        
+        <a id="downloadLink" class="download-link" download="ai-soulmate-vision-homepage.png">
+            Download Image
+        </a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('homepageCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function generateImage() {
+            // Clear canvas
+            ctx.clearRect(0, 0, 800, 400);
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 800, 400);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 800, 400);
+            
+            // Add some decorative elements
+            drawDecorativeCircles();
+            
+            // Add main title
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 48px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('AI Soulmate Vision', 400, 120);
+            
+            // Add subtitle
+            ctx.font = '24px Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillText('Generate Your Perfect Match with AI', 400, 160);
+            
+            // Add feature highlights
+            ctx.font = '18px Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillText('✨ Upload Photo • 🎨 6 Artistic Styles • 🌍 Multi-Language • 🔒 Privacy-First', 400, 200);
+            
+            // Add AI icons and visual elements
+            drawAIElements();
+            
+            // Add call-to-action
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'bold 20px Arial, sans-serif';
+            ctx.fillText('Experience the Future of Romantic Discovery', 400, 280);
+            
+            // Add website URL
+            ctx.font = '16px Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillText('aisoulmatevision.online', 400, 320);
+            
+            // Add decorative border
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(20, 20, 760, 360);
+        }
+        
+        function drawDecorativeCircles() {
+            // Add floating circles for visual appeal
+            const circles = [
+                {x: 100, y: 80, r: 20, alpha: 0.1},
+                {x: 700, y: 120, r: 15, alpha: 0.15},
+                {x: 150, y: 300, r: 25, alpha: 0.08},
+                {x: 650, y: 280, r: 18, alpha: 0.12}
+            ];
+            
+            circles.forEach(circle => {
+                ctx.beginPath();
+                ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
+                ctx.fillStyle = `rgba(255, 255, 255, ${circle.alpha})`;
+                ctx.fill();
+            });
+        }
+        
+        function drawAIElements() {
+            // Draw AI-related visual elements
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            
+            // Draw neural network nodes
+            const nodes = [
+                {x: 80, y: 240}, {x: 120, y: 220}, {x: 160, y: 260},
+                {x: 640, y: 240}, {x: 600, y: 220}, {x: 560, y: 260}
+            ];
+            
+            nodes.forEach(node => {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 8, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+            
+            // Draw connecting lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(80, 240);
+            ctx.lineTo(120, 220);
+            ctx.lineTo(160, 260);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(640, 240);
+            ctx.lineTo(600, 220);
+            ctx.lineTo(560, 260);
+            ctx.stroke();
+        }
+        
+        function downloadImage() {
+            const link = document.getElementById('downloadLink');
+            link.href = canvas.toDataURL('image/png');
+            link.style.display = 'inline-block';
+            link.click();
+        }
+        
+        // Generate initial image
+        generateImage();
+    </script>
+</body>
+</html> 

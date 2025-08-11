@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Screenshot Tool</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .preview-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .download-link {
+            display: none;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 10px;
+        }
+        
+        .download-link:hover {
+            background: #218838;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Website Screenshot Tool</h1>
+        
+        <div class="instructions">
+            <h3>使用说明：</h3>
+            <ol>
+                <li>在下方输入框中输入你的网站地址（例如：http://localhost:3000 或 https://aisoulmatevision.online）</li>
+                <li>点击"截取截图"按钮</li>
+                <li>等待截图生成完成</li>
+                <li>点击"下载图片"保存800x400像素的截图</li>
+                <li><strong>注意：</strong>确保你的网站正在运行，并且没有弹窗遮挡内容</li>
+            </ol>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="websiteUrl">网站地址：</label>
+                <input type="url" id="websiteUrl" placeholder="https://aisoulmatevision.online" value="http://localhost:3000">
+            </div>
+            
+            <div class="button-group">
+                <button onclick="takeScreenshot()" id="screenshotBtn">📸 截取截图</button>
+                <button onclick="downloadScreenshot()" id="downloadBtn" disabled>💾 下载图片</button>
+            </div>
+        </div>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <div class="preview-section" id="previewSection" style="display: none;">
+            <h3>预览截图：</h3>
+            <img id="previewImage" class="preview-image" alt="Website Screenshot">
+            <br>
+            <a id="downloadLink" class="download-link" download="website-screenshot.png">
+                📥 下载截图
+            </a>
+        </div>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        let screenshotData = null;
+        
+        async function takeScreenshot() {
+            const url = document.getElementById('websiteUrl').value;
+            const screenshotBtn = document.getElementById('screenshotBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const status = document.getElementById('status');
+            const previewSection = document.getElementById('previewSection');
+            
+            if (!url) {
+                showStatus('请输入有效的网站地址', 'error');
+                return;
+            }
+            
+            // 显示加载状态
+            screenshotBtn.disabled = true;
+            screenshotBtn.textContent = '⏳ 截图中...';
+            showStatus('正在截取网站截图，请稍候...', 'loading');
+            
+            try {
+                // 创建一个隐藏的iframe来加载网站
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'absolute';
+                iframe.style.left = '-9999px';
+                iframe.style.top = '-9999px';
+                iframe.style.width = '800px';
+                iframe.style.height = '400px';
+                iframe.style.border = 'none';
+                document.body.appendChild(iframe);
+                
+                // 等待iframe加载完成
+                await new Promise((resolve, reject) => {
+                    iframe.onload = resolve;
+                    iframe.onerror = reject;
+                    iframe.src = url;
+                    
+                    // 设置超时
+                    setTimeout(reject, 10000);
+                });
+                
+                // 等待页面完全加载
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // 使用html2canvas截取iframe内容
+                const canvas = await html2canvas(iframe.contentDocument.body, {
+                    width: 800,
+                    height: 400,
+                    scale: 1,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                });
+                
+                // 清理iframe
+                document.body.removeChild(iframe);
+                
+                // 显示预览
+                const previewImage = document.getElementById('previewImage');
+                previewImage.src = canvas.toDataURL('image/png');
+                previewSection.style.display = 'block';
+                
+                // 保存截图数据
+                screenshotData = canvas.toDataURL('image/png');
+                
+                // 启用下载按钮
+                downloadBtn.disabled = false;
+                
+                showStatus('截图生成成功！', 'success');
+                
+            } catch (error) {
+                console.error('截图失败:', error);
+                showStatus('截图失败：' + error.message, 'error');
+            } finally {
+                screenshotBtn.disabled = false;
+                screenshotBtn.textContent = '📸 截取截图';
+            }
+        }
+        
+        function downloadScreenshot() {
+            if (!screenshotData) {
+                showStatus('请先截取截图', 'error');
+                return;
+            }
+            
+            const link = document.getElementById('downloadLink');
+            link.href = screenshotData;
+            link.click();
+            
+            showStatus('图片下载已开始', 'success');
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            // 3秒后自动隐藏成功消息
+            if (type === 'success') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查html2canvas是否加载成功
+            if (typeof html2canvas === 'undefined') {
+                showStatus('html2canvas库加载失败，请检查网络连接', 'error');
+            }
+        });
+    </script>
+</body>
+</html> 
